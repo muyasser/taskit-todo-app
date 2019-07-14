@@ -1,0 +1,4 @@
+1 - descent design
+2- save todos to a database
+3- real time theming and persist theme
+4 - best practises in code
