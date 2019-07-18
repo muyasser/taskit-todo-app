@@ -7,7 +7,8 @@ import '../models/todo_model.dart';
 
 const String TABLE_NAME = 'Tasks';
 
-int allTasks = 0;
+int _todosCount;
+int _doneTodosCount = 0;
 
 class DatabaseHelper {
   // database object
@@ -60,9 +61,16 @@ class DatabaseHelper {
             isComplete: todosListOfMaps[i]['status'] == 0 ? false : true,
             priority: todosListOfMaps[i]['priority']),
       );
+
+      // get done todos count query
+
+      _doneTodosCount = Sqflite.firstIntValue(await dbClient
+          .rawQuery('SELECT COUNT(*) FROM $TABLE_NAME WHERE status = 1'));
     }
 
-    allTasks = todos.length;
+    _todosCount = todos.length;
+    print('All todos count : $_todosCount');
+    print('Done todos count : $_doneTodosCount');
 
     return todos;
   }
@@ -79,8 +87,6 @@ class DatabaseHelper {
     int result = await dbClient.insert(TABLE_NAME, Todo.todoToMap(id, todo));
     print('Added todo id: ${result.toString()}');
 
-    allTasks++;
-
     return result;
   }
 
@@ -92,11 +98,18 @@ class DatabaseHelper {
     int result =
         await dbClient.delete(TABLE_NAME, where: 'id = ?', whereArgs: [id]);
 
-    allTasks--;
-
-    print('allTasks : $allTasks');
-
     print('deleted element at index $result');
+
+    return result;
+  }
+
+  // update todo
+
+  Future<int> updateTodo(Map<String, dynamic> data) async {
+    var dbClient = await db;
+
+    int result = await dbClient
+        .update(TABLE_NAME, data, where: 'id = ?', whereArgs: [data['id']]);
 
     return result;
   }
@@ -109,10 +122,18 @@ class DatabaseHelper {
     int result = await dbClient.delete(TABLE_NAME);
     print(result);
 
-    allTasks = 0;
+    todosCount = 0;
+    doneTodosCount = 0;
 
     return result;
   }
 
-  int get todosCount => allTasks;
+  // get all todos count
+  int get todosCount => _todosCount;
+  int get doneTodosCount => _doneTodosCount;
+
+  set todosCount(int value) => _todosCount = value;
+  set doneTodosCount(int value) => _doneTodosCount = value;
+
+  // get done todos count
 }

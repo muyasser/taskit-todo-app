@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../app_state/bloc_provider.dart';
 
 class RemoveAllTasksDialog extends StatelessWidget {
+  final BlocProvider blocProvider = BlocProvider.instance;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -15,7 +17,7 @@ class RemoveAllTasksDialog extends StatelessWidget {
         FlatButton(
           child: Text('CONFIRM'),
           onPressed: () {
-            BlocProvider.removeAllTodos();
+            blocProvider.removeAllTodos();
             Navigator.pop(context);
           },
         ),

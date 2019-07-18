@@ -11,7 +11,10 @@ class Router {
         return MaterialPageRoute(builder: (_) => HomeScreen());
         break;
       case '/new':
-        return MaterialPageRoute(builder: (_) => AddTaskScreen());
+        return MaterialPageRoute(
+            builder: (_) => AddTaskScreen(
+                  todo: args,
+                ));
         break;
 
       default:

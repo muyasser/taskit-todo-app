@@ -5,23 +5,37 @@ import '../models/todo_model.dart';
 
 enum _priorities { Basic, Important, Critical }
 
+enum _mode { Create, Edit }
+
 class AddTaskScreen extends StatefulWidget {
+  final Todo todo;
+
+  AddTaskScreen({this.todo});
+
   @override
   _AddTaskScreenState createState() => _AddTaskScreenState();
 }
 
 class _AddTaskScreenState extends State<AddTaskScreen> {
-  _priorities groupValue = _priorities.Basic;
+  _mode currentMode;
+
+  TextEditingController _titleController;
+  _priorities groupValue;
+
+  String submitButtonName;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  TextEditingController _titleController;
   BlocProvider blocProvider;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
+    if (widget.todo != null) {
+      initEdit();
+    } else {
+      initCreate();
+    }
     blocProvider = BlocProvider.instance;
   }
 
@@ -48,6 +62,15 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         validator: _validateTitle,
         onSaved: _saveTaskInfo,
         decoration: InputDecoration(
+          suffixIcon: IconButton(
+            color: Colors.grey,
+            icon: Icon(
+              Icons.clear,
+            ),
+            onPressed: () {
+              _titleController.clear();
+            },
+          ),
           labelText: 'Title',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
@@ -108,10 +131,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           onPressed: navigateToHomeScreen,
         ),
         RaisedButton(
-          child: Text('CREATE'),
+          child: Text(submitButtonName),
           color: Colors.indigo,
           textColor: Colors.white,
-          onPressed: _submitTask,
+          onPressed: currentMode == _mode.Create ? _createTask : _updateTodo,
         ),
       ],
     );
@@ -173,9 +196,28 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
-  void _submitTask() {
+  void _createTask() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
+      navigateToHomeScreen();
+    }
+  }
+
+  // update tas info method
+  void _updateTaskInfo() {
+    var data = {
+      'id': widget.todo.id,
+      'name': _titleController.text,
+      'status': Todo.mapStatus(widget.todo.isComplete),
+      'priority': mapPriorityToInt(groupValue)
+    };
+
+    blocProvider.updateTodo(data);
+  }
+
+  void _updateTodo() {
+    if (_formKey.currentState.validate()) {
+      _updateTaskInfo();
       navigateToHomeScreen();
     }
   }
@@ -185,5 +227,21 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     Navigator.of(context).pop();
   }
 
-  void addTask() {}
+  void initEdit() {
+    currentMode = _mode.Edit;
+    groupValue = widget.todo.priority == 0
+        ? _priorities.Basic
+        : widget.todo.priority == 1
+            ? _priorities.Important
+            : _priorities.Critical;
+    _titleController = TextEditingController(text: widget.todo.name);
+    submitButtonName = 'UPDATE';
+  }
+
+  void initCreate() {
+    currentMode = _mode.Create;
+    groupValue = _priorities.Basic;
+    _titleController = TextEditingController();
+    submitButtonName = 'CREATE';
+  }
 }

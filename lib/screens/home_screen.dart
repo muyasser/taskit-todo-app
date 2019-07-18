@@ -1,11 +1,11 @@
 import 'package:complete_todo_app/database/database_helper.dart';
 import 'package:flutter/material.dart';
-
 import '../app_state/bloc_provider.dart';
 import '../models/todo_model.dart';
 import '../widgets/remove_all_tasks_dialog.dart';
 import 'info_screen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../app_state/theme_provider.dart';
 
 const List<String> _appbarActionList = ['CLEAR TODOS'];
 
@@ -20,13 +20,24 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   DatabaseHelper databaseHelper;
   TabController _tabController;
 
+  ThemeData theme;
+
   var todosTab = StreamBuilder<List<Todo>>(
     stream: BlocProvider.todoListStream,
     builder: (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
       if (snapshot.hasData) {
         if (snapshot.data.length == 0) {
-          return Center(
+          /* return Center(
             child: Text('No todos yet'),
+          ); */
+
+          return Center(
+            child: Image.asset(
+              'assets/empty.png',
+              fit: BoxFit.contain,
+              color: Colors.grey.shade400,
+              colorBlendMode: BlendMode.modulate,
+            ),
           );
         } else {
           return ListView.builder(
@@ -38,23 +49,48 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
               return Slidable(
                 actionPane: SlidableStrechActionPane(),
                 actionExtentRatio: 0.2,
+                actions: <Widget>[
+                  IconSlideAction(
+                    caption: snapshot.data[index].isComplete == true
+                        ? 'Pending'
+                        : 'Done',
+                    icon: snapshot.data[index].isComplete == true
+                        ? Icons.timelapse
+                        : Icons.done_outline,
+                    onTap: () =>
+                        blocProvider.updateTodoStatus(snapshot.data[index]),
+                  ),
+                ],
                 secondaryActions: <Widget>[
                   IconSlideAction(
                     caption: 'Edit',
                     icon: Icons.edit,
-                    color: Colors.grey[300],
-                    onTap: () => print('Edite success'),
+                    //color: Colors.grey[300],
+                    onTap: () {
+                      print('Edite success');
+
+                      Navigator.of(context)
+                          .pushNamed('/new', arguments: snapshot.data[index]);
+                    },
                   ),
                   IconSlideAction(
-                    caption: 'Delete',
-                    icon: Icons.edit,
-                    color: Colors.red,
-                    onTap: () => print('Delete success'),
-                  ),
+                      caption: 'Delete',
+                      icon: Icons.delete,
+                      //color: Colors.red,
+                      onTap: () =>
+                          blocProvider.removeTodo(snapshot.data[index])),
                 ],
                 child: ListTile(
                   key: Key(item.toString()),
-                  title: Text(snapshot.data[index].name),
+                  title: Text(
+                    snapshot.data[index].name,
+                    style: TextStyle(
+                      decoration: snapshot.data[index].isComplete == true
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                      decorationThickness: 1.4,
+                    ),
+                  ),
                   subtitle: Text(Todo.mapPriority(snapshot.data[index].priority)
                       .toString()),
                   onTap: () {
@@ -75,6 +111,7 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.color,
         elevation: 0,
@@ -85,6 +122,10 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
         ),
         actions: <Widget>[
           // do some action hobb-ya
+          IconButton(
+            icon: Icon(Icons.brightness_4),
+            onPressed: ThemeProvider.toggleTheme,
+          ),
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert),
             onSelected: _onSelectAction,
@@ -109,8 +150,16 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton.extended(
-        label: Text('Add Task'),
-        icon: Icon(Icons.add),
+        label: Text(
+          'Add Task',
+          style: Theme.of(context).textTheme.button,
+        ),
+
+        icon: Icon(
+          Icons.add,
+          color: Theme.of(context).iconTheme.color,
+        ),
+
         elevation: 4,
         backgroundColor: Colors.indigo,
         //shape: ,
@@ -129,7 +178,7 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
       ),
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
-        color: Colors.white,
+        color: Theme.of(context).bottomAppBarColor,
         //shape: CircularNotchedRectangle(),
         clipBehavior: Clip.antiAliasWithSaveLayer,
         notchMargin: 4,

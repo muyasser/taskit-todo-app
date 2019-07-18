@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../database/database_helper.dart';
 import '../models/todo_model.dart';
 import 'dart:async';
@@ -18,36 +20,41 @@ class BlocProvider {
     return _blocProvider;
   }
 
-  int allTasks = 0;
-
   void _init() async {
     List<Todo> todosList = await databaseHelper.getTodos();
 
-    allTasks = todosList.length;
-
     _controller.sink.add(todosList);
+
+    _statsController.sink
+        .add({'allTodos': allTodosCount, 'doneTodos': doneTodosCount});
   }
 
   static final DatabaseHelper databaseHelper = DatabaseHelper();
 
   static final BehaviorSubject<List<Todo>> _controller = BehaviorSubject();
+  static final BehaviorSubject<Map<String, int>> _statsController =
+      BehaviorSubject();
 
-  Future<List<Todo>> get getAllTodos => databaseHelper.getTodos();
+  static Future<List<Todo>> get _getAllTodos => databaseHelper.getTodos();
 
   static Stream<List<Todo>> get todoListStream => _controller.stream;
+  static Stream<Map<String, int>> get statsStream => _statsController.stream;
 
   void dispose() {
     _controller.close();
+    _statsController.close();
   }
 
   void addTodo(Todo todo) async {
     await databaseHelper.saveTodo(todo);
 
-    await getAllTodos.then((todos) {
+    await _getAllTodos.then((todos) {
       _controller.sink.add(todos);
     });
 
-    print(('stream added'));
+    //print(('stream added'));
+    _statsController.sink
+        .add({'allTodos': allTodosCount, 'doneTodos': doneTodosCount});
   }
 
   void removeTodo(Todo todo) async {
@@ -55,18 +62,51 @@ class BlocProvider {
 
     await databaseHelper.deletetodo(todo.id);
 
-    await getAllTodos.then((todos) {
+    await _getAllTodos.then((todos) {
       _controller.sink.add(todos);
     });
+
+    _statsController.sink
+        .add({'allTodos': allTodosCount, 'doneTodos': doneTodosCount});
   }
 
-  static void removeAllTodos() async {
+  void removeAllTodos() async {
     databaseHelper.removeAllTodos();
 
-    _controller.sink.add([]);
+    await _getAllTodos.then((todos) {
+      _controller.sink.add(todos);
+    });
+
+    _statsController.sink
+        .add({'allTodos': allTodosCount, 'doneTodos': doneTodosCount});
   }
 
-  Future<int> getTodosLength() async {
-    return databaseHelper.todosCount;
+  void updateTodo(Map<String, dynamic> data) async {
+    await databaseHelper.updateTodo(data);
+
+    await _getAllTodos.then((todos) {
+      _controller.sink.add(todos);
+    });
+
+    _statsController.sink
+        .add({'allTodos': allTodosCount, 'doneTodos': doneTodosCount});
   }
+
+  void updateTodoStatus(Todo todo) async {
+    bool newStatus = !(todo.isComplete);
+
+    Map<String, dynamic> data = {
+      'id': todo.id,
+      'name': todo.name,
+      'status': Todo.mapStatus(newStatus),
+      'priority': todo.priority,
+    };
+
+    updateTodo(data);
+
+    print('status updated success');
+  }
+
+  int get allTodosCount => databaseHelper.todosCount;
+  int get doneTodosCount => databaseHelper.doneTodosCount;
 }
