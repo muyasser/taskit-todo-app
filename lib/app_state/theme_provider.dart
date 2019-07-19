@@ -8,6 +8,9 @@ final ThemeData _lightTheme = ThemeData(
   highlightColor: Colors.transparent,
   textTheme: TextTheme(
     button: TextStyle(color: Colors.white),
+    title: TextStyle(
+      color: Colors.black.withOpacity(.8),
+    ),
   ),
   iconTheme: IconThemeData(color: Colors.white),
   tabBarTheme: TabBarTheme(
@@ -15,10 +18,21 @@ final ThemeData _lightTheme = ThemeData(
     unselectedLabelColor: Colors.black,
   ),
   appBarTheme: AppBarTheme(
-    color: Colors.indigo.shade400,
+    color: Colors.transparent,
+    actionsIconTheme: IconThemeData(
+      color: Colors.black.withOpacity(.8),
+    ),
   ),
   bottomAppBarColor: Colors.transparent,
   toggleableActiveColor: Colors.indigoAccent,
+  accentIconTheme: IconThemeData(
+    color: Colors.red,
+  ),
+  accentTextTheme: TextTheme(
+    button: TextStyle(
+      color: Colors.black87,
+    ),
+  ),
 );
 
 final ThemeData _darkTheme = ThemeData(
@@ -32,8 +46,18 @@ final ThemeData _darkTheme = ThemeData(
     labelColor: Colors.white,
     unselectedLabelColor: Colors.grey,
   ),
-  textTheme: TextTheme(button: TextStyle(color: Colors.white)),
-  appBarTheme: AppBarTheme(color: Colors.indigo),
+  textTheme: TextTheme(
+    button: TextStyle(color: Colors.white),
+    title: TextStyle(
+      color: Colors.grey[300],
+    ),
+  ),
+  appBarTheme: AppBarTheme(
+    color: Colors.transparent,
+    actionsIconTheme: IconThemeData(
+      color: Colors.grey[300],
+    ),
+  ),
   toggleableActiveColor: Colors.indigoAccent,
 
   //bottomAppBarColor: Colors.transparent,
@@ -41,6 +65,12 @@ final ThemeData _darkTheme = ThemeData(
   bottomAppBarColor: Colors.transparent,
 
   buttonColor: Colors.grey[400],
+
+  accentTextTheme: TextTheme(
+    button: TextStyle(
+      color: Colors.grey[100],
+    ),
+  ),
 );
 
 class ThemeProvider {

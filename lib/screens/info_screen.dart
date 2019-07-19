@@ -30,102 +30,123 @@ class _InfoScreenState extends State<InfoScreen> {
         builder: (context, snapshot) {
           return Container(
             padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Stack(
               children: <Widget>[
-                Center(
-                  child: Text(
-                    '#Some math#',
-                    style: TextStyle(
-                        fontSize: 18, color: Theme.of(context).accentColor),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Text(
-                      'All tasks',
-                      style: _textStyle,
+                    Center(
+                      child: Text(
+                        '#Some math#',
+                        style: TextStyle(
+                            fontSize: 18, color: Theme.of(context).accentColor),
+                      ),
                     ),
-                    Text(
-                      snapshot.data['allTodos'].toString(),
-                      style: TextStyle(
-                          fontSize: 22, color: Theme.of(context).accentColor),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'All tasks',
+                          style: _textStyle,
+                        ),
+                        Text(
+                          snapshot.data['allTodos'].toString(),
+                          style: TextStyle(
+                              fontSize: 22,
+                              color: Theme.of(context).accentColor),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'Done tasks',
+                          style: _textStyle,
+                        ),
+                        Text(
+                          snapshot.data['doneTodos'].toString(),
+                          style: TextStyle(
+                              fontSize: 22,
+                              color: Theme.of(context).accentColor),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 20),
+                      height: 2,
+                      color: Colors.grey,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          'Left todos',
+                          style: _textStyle,
+                        ),
+                        Text(
+                          "${snapshot.data['allTodos'] - snapshot.data['doneTodos']}",
+                          style: TextStyle(
+                              fontSize: 22,
+                              color: Theme.of(context).accentColor),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Center(
+                      child: Text(
+                        (snapshot.data['doneTodos'] / snapshot.data['allTodos'])
+                                        .isNaN ==
+                                    true ||
+                                (snapshot.data['doneTodos'] /
+                                            snapshot.data['allTodos'])
+                                        .isInfinite ==
+                                    true
+                            ? ''
+                            : "Success: ${(snapshot.data['doneTodos'] / snapshot.data['allTodos'] * 100).truncate()}%",
+                        style: TextStyle(
+                          fontSize: _textStyle.fontSize,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: (snapshot.data['doneTodos'] /
+                                  snapshot.data['allTodos'] *
+                                  100) ==
+                              100
+                          ? Icon(
+                              Icons.done_all,
+                              size: 50,
+                              color: Colors.indigoAccent,
+                            )
+                          : SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Image.asset(
+                                  'assets/calc.png',
+                                  color: Colors.grey,
+                                  colorBlendMode: BlendMode.modulate,
+                                ),
+                              ),
+                            ),
                     ),
                   ],
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Done tasks',
-                      style: _textStyle,
-                    ),
-                    Text(
-                      snapshot.data['doneTodos'].toString(),
-                      style: TextStyle(
-                          fontSize: 22, color: Theme.of(context).accentColor),
-                    ),
-                  ],
-                ),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 20),
-                  height: 2,
-                  color: Colors.grey,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      'Left todos',
-                      style: _textStyle,
-                    ),
-                    Text(
-                      "${snapshot.data['allTodos'] - snapshot.data['doneTodos']}",
-                      style: TextStyle(
-                          fontSize: 22, color: Theme.of(context).accentColor),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                Center(
-                  child: Text(
-                    (snapshot.data['doneTodos'] / snapshot.data['allTodos'])
-                                    .isNaN ==
-                                true ||
-                            (snapshot.data['doneTodos'] /
-                                        snapshot.data['allTodos'])
-                                    .isInfinite ==
-                                true
-                        ? ''
-                        : "Success: ${(snapshot.data['doneTodos'] / snapshot.data['allTodos'] * 100).truncate()}%",
-                    style: TextStyle(
-                      fontSize: _textStyle.fontSize,
-                      color: Theme.of(context).accentColor,
-                    ),
-                  ),
-                ),
-                Center(
-                  child: (snapshot.data['doneTodos'] /
-                              snapshot.data['allTodos'] *
-                              100) ==
-                          100
-                      ? Icon(
-                          Icons.done_all,
-                          size: 50,
-                          color: Colors.indigoAccent,
-                        )
-                      : SizedBox(),
                 ),
               ],
             ),

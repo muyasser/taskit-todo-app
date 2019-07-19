@@ -47,12 +47,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     //blocProvider.dispose();
   }
 
-  final appBar = AppBar(
-    title: Text('Add Task'),
-    centerTitle: true,
-    automaticallyImplyLeading: false,
-  );
-
   @override
   Widget build(BuildContext context) {
     // title field
@@ -140,19 +134,54 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
 
     return Scaffold(
-      appBar: appBar,
-      body: Form(
-        key: _formKey,
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: <Widget>[
-              titleField,
-              radioButtons,
-              buttons,
-            ],
-          ),
+      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        title: Text(
+          'Add Task',
+          style: Theme.of(context).textTheme.title,
         ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        backgroundColor: Theme.of(context).canvasColor,
+      ),
+      body: Stack(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(60),
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset(
+                'assets/home.png',
+                fit: BoxFit.cover,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey
+                    : Colors.transparent,
+                colorBlendMode: Theme.of(context).brightness == Brightness.dark
+                    ? BlendMode.modulate
+                    : BlendMode.dst,
+              ),
+            ),
+          ),
+          Form(
+            key: _formKey,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Stack(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      titleField,
+                      radioButtons,
+                      buttons,
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

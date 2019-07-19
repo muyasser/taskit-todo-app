@@ -1,5 +1,6 @@
 import 'package:complete_todo_app/database/database_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../app_state/bloc_provider.dart';
 import '../models/todo_model.dart';
 import '../widgets/remove_all_tasks_dialog.dart';
@@ -40,66 +41,101 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
             ),
           );
         } else {
-          return ListView.builder(
-            controller: _lvController,
-            itemCount: snapshot.data.length,
-            physics: BouncingScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              final item = snapshot.data[index];
-              return Slidable(
-                actionPane: SlidableStrechActionPane(),
-                actionExtentRatio: 0.2,
-                actions: <Widget>[
-                  IconSlideAction(
-                    caption: snapshot.data[index].isComplete == true
-                        ? 'Pending'
-                        : 'Done',
-                    icon: snapshot.data[index].isComplete == true
-                        ? Icons.timelapse
-                        : Icons.done_outline,
-                    onTap: () =>
-                        blocProvider.updateTodoStatus(snapshot.data[index]),
-                  ),
-                ],
-                secondaryActions: <Widget>[
-                  IconSlideAction(
-                    caption: 'Edit',
-                    icon: Icons.edit,
-                    //color: Colors.grey[300],
-                    onTap: () {
-                      print('Edite success');
-
-                      Navigator.of(context)
-                          .pushNamed('/new', arguments: snapshot.data[index]);
-                    },
-                  ),
-                  IconSlideAction(
-                      caption: 'Delete',
-                      icon: Icons.delete,
-                      //color: Colors.red,
-                      onTap: () =>
-                          blocProvider.removeTodo(snapshot.data[index])),
-                ],
-                child: ListTile(
-                  key: Key(item.toString()),
-                  title: Text(
-                    snapshot.data[index].name,
-                    style: TextStyle(
-                      decoration: snapshot.data[index].isComplete == true
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                      decorationThickness: 1.4,
+          return Container(
+            decoration: BoxDecoration(
+                //color: Colors.indigo[100],
+                ),
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Image.asset(
+                      'assets/add.png',
+                      fit: BoxFit.scaleDown,
+                      color: Colors.grey,
+                      colorBlendMode: BlendMode.modulate,
                     ),
                   ),
-                  subtitle: Text(Todo.mapPriority(snapshot.data[index].priority)
-                      .toString()),
-                  onTap: () {
-                    print(index.toString());
-                    blocProvider.removeTodo(snapshot.data[index]);
+                ),
+                ListView.builder(
+                  controller: _lvController,
+                  itemCount: snapshot.data.length,
+                  physics: BouncingScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    final item = snapshot.data[index];
+                    return Slidable(
+                      closeOnScroll: true,
+                      actionPane: SlidableStrechActionPane(),
+                      actionExtentRatio: 0.2,
+                      actions: <Widget>[
+                        IconSlideAction(
+                          color: Colors.transparent,
+                          foregroundColor:
+                              Theme.of(context).accentTextTheme.button.color,
+                          caption: snapshot.data[index].isComplete == true
+                              ? 'Pending'
+                              : 'Done',
+                          icon: snapshot.data[index].isComplete == true
+                              ? Icons.timelapse
+                              : Icons.done_outline,
+                          onTap: () => blocProvider
+                              .updateTodoStatus(snapshot.data[index]),
+                        ),
+                      ],
+                      secondaryActions: <Widget>[
+                        IconSlideAction(
+                          closeOnTap: true,
+                          caption: 'Edit',
+                          icon: Icons.edit,
+                          color: Colors.transparent,
+                          foregroundColor:
+                              Theme.of(context).accentTextTheme.button.color,
+                          onTap: () {
+                            print('Edite success');
+
+                            Navigator.of(context).pushNamed('/new',
+                                arguments: snapshot.data[index]);
+                          },
+                        ),
+                        IconSlideAction(
+                            color: Colors.transparent,
+                            foregroundColor:
+                                Theme.of(context).accentTextTheme.button.color,
+                            caption: 'Delete',
+                            icon: Icons.delete,
+                            //color: Colors.red,
+                            onTap: () =>
+                                blocProvider.removeTodo(snapshot.data[index])),
+                      ],
+                      child: ListTile(
+                        key: Key(item.toString()),
+                        title: Text(
+                          snapshot.data[index].name,
+                          style: TextStyle(
+                            decoration: snapshot.data[index].isComplete == true
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                            decorationThickness: 1.4,
+                          ),
+                        ),
+                        trailing: snapshot.data[index].isComplete == true
+                            ? Icon(Icons.done)
+                            : SizedBox(),
+                        subtitle: Text(
+                            Todo.mapPriority(snapshot.data[index].priority)
+                                .toString()),
+                        onTap: () {
+                          print(index.toString());
+                          //blocProvider.removeTodo(snapshot.data[index]);
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
+              ],
+            ),
           );
         }
       } else {
@@ -113,12 +149,13 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        actionsIconTheme: Theme.of(context).appBarTheme.actionsIconTheme,
         backgroundColor: Theme.of(context).appBarTheme.color,
         elevation: 0,
         centerTitle: true,
         title: Text(
           'Tasks',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+          style: Theme.of(context).textTheme.title,
         ),
         actions: <Widget>[
           // do some action hobb-ya
@@ -191,8 +228,8 @@ class _HomeState extends State<HomeScreen> with SingleTickerProviderStateMixin {
               text: 'Todos',
             ),
             Tab(
-              icon: Icon(Icons.info),
-              text: 'Info',
+              icon: Icon(FontAwesomeIcons.calculator),
+              text: 'Math',
             ),
           ],
         ),
