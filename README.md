@@ -1,18 +1,2 @@
 ![Finished App](demo.gif)
 
-
-![Alt text](/imgs/1.png?raw=true "1")
-![Alt text](/imgs/2.png?raw=true "1")
-![Alt text](/imgs/3.png?raw=true "1")
-![Alt text](/imgs/4.png?raw=true "1")
-![Alt text](/imgs/5.png?raw=true "1")
-![Alt text](/imgs/6.png?raw=true "1")
-![Alt text](/imgs/7.png?raw=true "1")
-![Alt text](/imgs/8.png?raw=true "1")
-![Alt text](/imgs/9.png?raw=true "1")
-![Alt text](/imgs/10.png?raw=true "1")
-![Alt text](/imgs/11.png?raw=true "1")
-![Alt text](/imgs/12.png?raw=true "1")
-![Alt text](/imgs/13.png?raw=true "1")
-![Alt text](/imgs/14.png?raw=true "1")
-![Alt text](/imgs/15.png?raw=true "1")
