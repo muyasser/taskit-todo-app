@@ -1,3 +1,6 @@
+![Finished App](demo.gif)
+
+
 ![Alt text](/imgs/1.png?raw=true "1")
 ![Alt text](/imgs/2.png?raw=true "1")
 ![Alt text](/imgs/3.png?raw=true "1")
